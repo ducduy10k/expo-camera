@@ -1,13 +1,22 @@
-import { Tabs } from 'expo-router';
+import { Redirect, Tabs } from 'expo-router';
 import React from 'react';
 
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { useFirstTimeOpen } from '@/hooks/useFirstTimeOpen';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-
+  const {isFirstTime, isLoading} = useFirstTimeOpen();
+  console.log(isFirstTime);
+  
+  if (isLoading) {
+    return <></>
+  }
+  if (isFirstTime) {
+    return <Redirect href={'/onboarding'} />;
+  }
   return (
     <Tabs
       screenOptions={{
