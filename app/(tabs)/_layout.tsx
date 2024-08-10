@@ -9,7 +9,6 @@ import { useFirstTimeOpen } from '@/hooks/useFirstTimeOpen';
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const {isFirstTime, isLoading} = useFirstTimeOpen();
-  console.log(isFirstTime);
   
   if (isLoading) {
     return <></>

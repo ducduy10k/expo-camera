@@ -1,15 +1,12 @@
-import { Image, StyleSheet, Platform, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
-import { HelloWave } from "@/components/HelloWave";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
 
 import * as WebBrowser from "expo-web-browser";
-import { BarcodeScanningResult, Camera, CameraMode, CameraView } from "expo-camera";
+import { BarcodeScanningResult, CameraMode, CameraView } from "expo-camera";
 import { useRef, useState } from "react";
 import BottomRowTools from "@/components/BottomRowTools";
 import MainRowActions from "@/components/MainRowActions";
+import QRCodeButton from "@/components/QRCodeButton";
 export default function HomeScreen() {
   const cameraRef = useRef<CameraView>(null);
   const [cameraMode, setCameraMode] = useState<CameraMode>('picture');
@@ -30,7 +27,6 @@ export default function HomeScreen() {
   }
   const handleBarcodeScanned = (scanningResult: BarcodeScanningResult) => {
    if (scanningResult.data) {
-    console.log(scanningResult);
     setQrCodeDetected(scanningResult.data);
    }
   }
@@ -46,6 +42,7 @@ export default function HomeScreen() {
         style={{flex: 1}} 
      
      >
+      {qrCodeDetected ? <QRCodeButton handleOpenQRCode={handleOpenQRCode}/>: null}
         <MainRowActions cameraMode={cameraMode} isRecording={false} handleTakePicture={handleTakePicture}></MainRowActions>
         <BottomRowTools cameraMode={cameraMode} setCameraMode={setCameraMode} />
       </CameraView>

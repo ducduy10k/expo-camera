@@ -39,6 +39,8 @@ export default function MainRowActions({
       first: 4,
     });
     setAssets(albumAssets.assets);
+    console.log(albumAssets.assets);
+    
   }
 
   return (
@@ -46,7 +48,9 @@ export default function MainRowActions({
       <FlatList
         data={assets}
         inverted
-        renderItem={({ item }) => (
+        keyExtractor={(item) => item.id }
+  
+        renderItem={({ item, index }) => (
           <Image
             key={item.id}
             source={item.uri}
@@ -70,7 +74,7 @@ export default function MainRowActions({
         showsHorizontalScrollIndicator={false}
       >
         {[0, 1, 2, 4].map((item) => (
-        <CustomIcon name={'smileo'} lib="Ant" size={30} color="white"/>
+        <CustomIcon key={item} name={'smileo'} lib="Ant" size={30} color="white"/>
 
         ))}
       </ScrollView>
