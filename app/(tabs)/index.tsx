@@ -1,20 +1,29 @@
-import { StyleSheet, View } from "react-native";
-
+import { SafeAreaView, StyleSheet, View } from "react-native";
 
 import * as WebBrowser from "expo-web-browser";
-import { BarcodeScanningResult, CameraMode, CameraView } from "expo-camera";
+import {
+  BarcodeScanningResult,
+  CameraMode,
+  CameraView,
+  FlashMode,
+} from "expo-camera";
 import { useRef, useState } from "react";
 import BottomRowTools from "@/components/BottomRowTools";
 import MainRowActions from "@/components/MainRowActions";
 import QRCodeButton from "@/components/QRCodeButton";
+import CameraTools from "@/components/CameraTools";
 export default function HomeScreen() {
   const cameraRef = useRef<CameraView>(null);
-  const [cameraMode, setCameraMode] = useState<CameraMode>('picture');
+  const [cameraMode, setCameraMode] = useState<CameraMode>("picture");
   const [qrCodeDetected, setQrCodeDetected] = useState<string>("");
- const [isBrowsing, setIsBrowsing] = useState<boolean>(false)
-  const handleTakePicture = () => {
+  const [isBrowsing, setIsBrowsing] = useState<boolean>(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [cameraZoom, setCameraZoom] = useState<number>(1);
+  const [cameraTorch, setCameraTorch] = useState<boolean>(false);
+  const [cameraFlash, setCameraFlash] = useState<FlashMode>("off");
+  const [cameraFacing, setCameraFacing] = useState<"front" | "back">("back");
 
-  }
+  const handleTakePicture = () => {};
 
   async function handleOpenQRCode() {
     setIsBrowsing(true);
@@ -26,25 +35,56 @@ export default function HomeScreen() {
     }
   }
   const handleBarcodeScanned = (scanningResult: BarcodeScanningResult) => {
-   if (scanningResult.data) {
-    setQrCodeDetected(scanningResult.data);
-   }
-  }
+    if (scanningResult.data) {
+      setQrCodeDetected(scanningResult.data);
+    }
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    timeoutRef.current = setTimeout(() => {
+      setQrCodeDetected("");
+    }, 1000);
+  };
+  console.log(cameraTorch);
+  
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: "yellow" }}>
       <CameraView
-       ref={cameraRef}
-       mode={cameraMode}
-       barcodeScannerSettings={{
-        barcodeTypes: ['qr']
-       }}
-       onBarcodeScanned={handleBarcodeScanned}
-        style={{flex: 1}} 
-     
-     >
-      {qrCodeDetected ? <QRCodeButton handleOpenQRCode={handleOpenQRCode}/>: null}
-        <MainRowActions cameraMode={cameraMode} isRecording={false} handleTakePicture={handleTakePicture}></MainRowActions>
-        <BottomRowTools cameraMode={cameraMode} setCameraMode={setCameraMode} />
+        ref={cameraRef}
+        mode={cameraMode}
+        barcodeScannerSettings={{
+          barcodeTypes: ["qr"],
+        }}
+        zoom={cameraZoom}
+        facing={cameraFacing}
+        flash={cameraFlash}
+        enableTorch={cameraTorch}
+        onBarcodeScanned={handleBarcodeScanned}
+        style={{ flex: 1 }}
+      >
+        <SafeAreaView style={{flex: 1}}>
+          {qrCodeDetected ? (
+            <QRCodeButton handleOpenQRCode={handleOpenQRCode} />
+          ) : null}
+          <CameraTools
+            cameraFlash={cameraFlash}
+            cameraTorch={cameraTorch}
+            cameraZoom={cameraZoom}
+            setCameraFacing={setCameraFacing}
+            setCameraFlash={setCameraFlash}
+            setCameraTorch={setCameraTorch}
+            setCameraZoom={setCameraZoom}
+          />
+          <MainRowActions
+            cameraMode={cameraMode}
+            isRecording={false}
+            handleTakePicture={handleTakePicture}
+          ></MainRowActions>
+          <BottomRowTools
+            cameraMode={cameraMode}
+            setCameraMode={setCameraMode}
+          />
+        </SafeAreaView>
       </CameraView>
     </View>
   );

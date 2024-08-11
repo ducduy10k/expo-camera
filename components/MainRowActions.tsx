@@ -39,8 +39,6 @@ export default function MainRowActions({
       first: 4,
     });
     setAssets(albumAssets.assets);
-    console.log(albumAssets.assets);
-    
   }
 
   return (
