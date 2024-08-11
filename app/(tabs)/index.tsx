@@ -12,6 +12,7 @@ import BottomRowTools from "@/components/BottomRowTools";
 import MainRowActions from "@/components/MainRowActions";
 import QRCodeButton from "@/components/QRCodeButton";
 import CameraTools from "@/components/CameraTools";
+import PictureView from "@/components/PictureView";
 export default function HomeScreen() {
   const cameraRef = useRef<CameraView>(null);
   const [cameraMode, setCameraMode] = useState<CameraMode>("picture");
@@ -23,7 +24,11 @@ export default function HomeScreen() {
   const [cameraFlash, setCameraFlash] = useState<FlashMode>("off");
   const [cameraFacing, setCameraFacing] = useState<"front" | "back">("back");
 
-  const handleTakePicture = () => {};
+  const [picture, setPicture] = useState<string>('');
+  async function  handleTakePicture() {
+    const response = await cameraRef.current?.takePictureAsync({});
+    setPicture(response!.uri);
+  };
 
   async function handleOpenQRCode() {
     setIsBrowsing(true);
@@ -46,7 +51,8 @@ export default function HomeScreen() {
     }, 1000);
   };
   console.log(cameraTorch);
-  
+  if (isBrowsing) return <></>;
+  if (picture) return <PictureView  picture={picture} setPicture={setPicture}/>
   return (
     <View style={{ flex: 1, backgroundColor: "yellow" }}>
       <CameraView
